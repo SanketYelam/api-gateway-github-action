@@ -51,8 +51,8 @@ jobs:
       - name: Log in to GitHUB Docker Registry  
         uses: docker/login-action@v2
         with:
-          username: ${{ vars.DOCKER_HUB_NAME }}
-          password: ${{ secrets.DOCKER_HUB_PAT }}
+          username: ${{ vars.DOCKER_HUB_NAME}}
+          password: ${{ secrets.DOCKER_HUB_PAT}}
 
 
       - name: push docker images
