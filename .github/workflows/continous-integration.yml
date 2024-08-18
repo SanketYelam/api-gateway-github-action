@@ -1,0 +1,59 @@
+name: CI/CD workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pre-commit-scans:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: checkout code
+        uses: actions/checkout@v4     
+
+      - name: check status
+        run: |
+          java --version
+          ls -ltr
+
+      - name: GitLeaks Scan
+        uses: zricethezav/gitleaks-action@v1.3.0
+        with:
+          args: --path=.
+
+      - name: oss scan
+        run: mvn ossindex:audit
+        continue-on-error: true
+
+      - name: owasp Scan
+        if: false
+        run: mvn org.owasp:dependency-check-maven:check
+
+      - name: Build code and create docker images
+        run: mvn clean install docker:build
+
+      - name: Re tag the docker image
+        run: docker tag org.dnyanyog/api-gateway:latest rameshwarshinde/api-gateway:latest
+
+   
+
+      - name: Log in to GitHUB Docker Registry  
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKER_HUB_NAME }}
+          password: ${{ secrets.DOCKER_HUB_PAT }}
+
+
+      - name: push docker images
+        run: docker push rameshwarshinde/api-gateway:latest
