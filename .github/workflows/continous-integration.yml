@@ -44,7 +44,7 @@ jobs:
         run: mvn clean install docker:build
 
       - name: Re tag the docker image
-        run: docker tag org.dnyanyog/api-gateway:latest rameshwarshinde/api-gateway:latest
+        run: docker tag org.dnyanyog/api-gateway:latest sanketyelam/api-gateway:latest
 
    
 
@@ -56,4 +56,4 @@ jobs:
 
 
       - name: push docker images
-        run: docker push rameshwarshinde/api-gateway:latest
+        run: docker push sanketyelam/api-gateway:latest
